@@ -1,6 +1,7 @@
 import os, time, platform, psutil, replicate
 from fastapi import FastAPI
 from dotenv import load_dotenv
+import uvicorn
 
 # Branding
 APP_NAME = "Seawan Sentinel"
@@ -11,6 +12,7 @@ LOGO_URL = "https://1drv.ms/i/c/b4478bc043d7798b/IQSOufJOlIG7SZI1CFrdvtJbAUUmy5D
 load_dotenv()
 os.environ["REPLICATE_API_TOKEN"] = os.getenv("REPLICATE_API_TOKEN")
 
+# FastAPI config Swagger UI langsung di root
 app = FastAPI(
     title=APP_NAME,
     description=f"""
@@ -18,7 +20,9 @@ app = FastAPI(
 **{APP_NAME}** - AI-Powered Server Monitoring<br>
 Author: {AUTHOR}
 """,
-    version="1.0.0"
+    version="1.0.0",
+    docs_url="/",    # Swagger langsung di root
+    redoc_url=None   # ReDoc dimatikan
 )
 
 def get_server_status():
@@ -61,3 +65,7 @@ def monitor():
         "metrics": data,
         "ai_analysis": analysis
     }
+
+if __name__ == "__main__":
+    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
+
